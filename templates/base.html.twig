@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+       
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        
+        <link rel="stylesheet" href="https://bootswatch.com/4/pulse/bootstrap.css">
+        <link rel="stylesheet" href="https://bootswatch.com/4/pulse/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ asset("assets/css/background.css") }}">
+        <link href='https://fonts.googleapis.com/css?family=Raleway:300' rel='stylesheet' type='text/css'> 
+        {% block stylesheets %}
+        
+        {% endblock %}
+    </head>
+    <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="/">MassCrab</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav mr-auto">
+                 <li class="nav-item">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <a class="nav-link" href="{{ path('boutique') }}"><button type="button" class="btn btn-primary" > Catégories</button> </a>
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+                                {% for categories in categories %}
+                                    <a class="dropdown-item" href="{{ path('category', {'id': categories.id } )}}">{{ categories.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <a class="nav-link" href="{{ path('marque') }}"><button type="button" class="btn btn-primary" > Marques </button> </a>
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+                                {% for marques in marques %}
+                                    <a class="dropdown-item" href="{{ path('select_marque', {'id': marques.id } )}}">{{ marques.nom }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>   
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+             <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                    {% if not app.user %}
+                        <a href="{{ path('security_login') }}" class="nav-link">Connexion</a>
+                    <li class="nav-item">
+                        <a href="{{ path('security_registration') }}" class="nav-link">Inscription</a>
+                    </li>    
+                    {% else %}
+                     <li class="nav-item">
+                        <a href="{{ path('panier') }}" class="nav-link">Panier</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('profil') }}" class="nav-link">Profil </a>
+                    </li>
+                     <li class="nav-item">
+                        <a href="{{ path('logout') }}" class="nav-link">Deconnexion</a>
+                    </li>    
+                    {% endif %}
+                    </li>
+                    {# pour cacher le bouton créer un article aux simples users #}
+                     {# si l'utilisateur est un administrateur #}
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('admin') }}"> Administration </a>
+                    </li>
+                  
+                    {% endif %}
+             </ul>
+                <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            </div>
+        </nav>
+        <div class="container">
+        
+
+        {% block flash %}
+            {% for flash_message in app.session.flashbag.get('success') %}
+                <div class="container alert alert-success" role="alert">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+            {% for flash_message in app.session.flashbag.get('info') %}
+                <div class="container alert alert-info" role="alert">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+            {% for flash_message in app.session.flashbag.get('warning') %}
+                <div class="container alert alert-warning" role="alert">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+            {% for flash_message in app.session.flashbag.get('danger') %}
+                <div class="container alert alert-danger" role="alert">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+        {% endblock %}
+        
+        {% block body %}{% endblock %}
+        </div>
+   
+        {% block javascripts %}
+        <script src="https://bootswatch.com/_vendor/popper.js/dist/umd/popper.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://bootswatch.com/_vendor/jquery/dist/jquery.min.js"></script>
+        <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+        {% endblock %}
+    </body>
+</html>

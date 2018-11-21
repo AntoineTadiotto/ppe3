@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} MassCrab {% endblock %}
+
+{% block body %}
+
+{% for category in category %}
+
+<h1>Les {{ category.title }}</h1>
+
+{% endfor %}
+
+<section class="categories">
+
+<div class="row">
+
+{% for article in articles %}
+
+    <div class="col-6 col-md-4">
+        <div class="card mb-3">
+            <h3 class="card-header">{{ article.title }}</h3>
+           
+            <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../{{ article.image }}" alt="Card image">
+
+            <div class="card-body card-footer">
+                <h3> {{ article.prix }} € </h3>
+                <a href="{{ path('article', {'id': article.id}) }}"> voir l'article </a>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+    
+</div>
+
+
+</section>
+
+
+{% endblock %}

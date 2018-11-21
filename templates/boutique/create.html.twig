@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% form_theme formArticle 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Creation d'article{% endblock %}
+
+{% block body %}
+
+{% if app.user %}
+
+{# {% if app.user.role == "admin" %} #}
+
+    {# utilise  editMode pour savoir si c'est une modification ou non #}
+    {% if editMode %} 
+    <h1>Modifier l'article</h1>
+    {% else %}
+    <h1>Ajouter un article</h1>
+    {% endif %}
+
+    {# affichage du form basé sur la classe article #}
+    {{ form_start(formArticle) }} 
+
+    {{ form_row(formArticle.title, {'attr': {'placeholder': "nom de l'article"}})}}
+    {{ form_row(formArticle.category) }}
+    {{ form_row(formArticle.marque) }}
+    {{ form_row(formArticle.description, {'attr': {'placeholder': "description"}})}} 
+    {{ form_row(formArticle.image, {'attr': {'placeholder': "image"}})}}
+    
+    {{ form_widget(formArticle) }}
+
+    <button type="submit" class="btn btn-primary btn-lg"> 
+    
+    {% if editMode %}
+    Enregistrer les modifications
+    {% else %}
+    Ajouter l'article
+    {% endif %}
+    </button>
+
+    {{ form_end(formArticle) }}
+{# {% else %} #}
+
+ {% endif %} 
+
+{# {% endif %} #}
+
+
+{% endblock %}

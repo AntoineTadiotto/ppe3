@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Votre panier {% endblock %}
+
+{% block body %}
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Vos articles</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prix</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for article in thisCart %}
+        <tr>
+            <td>
+                <div>
+                    <img src="{{ article.image }}" alt="">
+                </div>
+            </td>
+            <td>
+                <div>
+                    <p>{{ article.title }}</p>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <h1>{{ article.prix }} euro</h1>
+                </div>            
+            </td>
+            <td>
+                <div>
+                 
+                </div>
+            </td>
+            <td>
+                <div>
+                   
+                </div>
+            </td>
+
+
+{% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ path('commander') }}"><button class="btn btn-primary" type="submit">Commander</button></a>
+
+
+{% endblock %}

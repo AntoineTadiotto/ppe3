@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+
+ {{ article.title }}
+
+{% endblock %}
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="{{ asset("assets/css/show.css") }}">
+
+{% endblock %}
+
+{% block body %}
+
+<div class="card mb-3">
+    <h3 class="card-header">{{ article.title }}</h3>
+<div class="imgdescr">
+        <img class="img" style="height: 50%; width: 50%;" src="../{{ article.image }}" alt="Card image">
+    
+<div class="prixdescr">
+    <div class="card-body">
+        <h5 class="card-title">{{ article.description }}</h5>
+    </div>
+
+    
+        <div class="card-body">
+            <h2 class="card-text prix"> {{ article.prix }} € </h2>
+        </div>
+        <div class="card-body">
+            <button class="btn btn-primary btnAdd" id="addPanier">Ajouter au panier</button>        
+        </div>
+</div>
+</div>
+</div>
+
+
+</div>
+
+<div class="card mb-3 container">
+<section id="commentaire">
+
+{{ form_start(commentForm)}}
+
+{{ form_row(commentForm.author, {'attr':{'placeholder': "votre nom" }})}}
+{{ form_row(commentForm.content, {'attr':{'placeholder': "votre commentaire"}}) }}
+
+<button type="submit" class="btn btn-success btnPost">poster le commentaire</button>
+</div>
+
+{{ form_end(commentForm) }}
+
+<div class="card mb-3 container commentaires">
+
+<h1 class="card-header">Commentaires et avis</h1>
+{% for comment in article.comments %}
+<div class="comment">
+  <div class="row">
+            <div class="col-3">
+               <h2> {{ comment.author }}</h2> (<small> le {{ comment.createdAt | date ('d/m/Y à H:i')}}</small>)
+            </div>
+            <div class="col">
+                {{ comment.content | raw }}
+            </div>
+    </div>
+</div>
+
+{% endfor %}
+</div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready( function() {
+
+        //FUNCTION AJAX
+        function reqAjax(){
+            $.ajax({
+                async: true,
+                type: 'POST',
+                url: "{{ path('ajouter_panier', {'id' : app.request.get('_route_params')['id']}) }}",
+                success: function (data) {
+                    if(data == "1"){
+                        alert('Article ajouté au panier !');
+                        return;
+                    } else {
+                        alert('Il y a eu un problème ! -> '+data);
+                        return;
+                    }
+                },
+                complete : function(){
+                    // do
+                }
+            });
+        }
+        $('#addPanier').click(function(){
+            reqAjax();
+        });
+    });
+</script>
+{% endblock %}

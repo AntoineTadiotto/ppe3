@@ -1,0 +1,40 @@
+html,body {
+    background-color: ghostwhite;
+
+}
+.imgdescr {
+   display: inline-flex; 
+}
+.container {
+    margin-top: 2%;
+}
+.prixdescr {
+    display: block;
+}
+
+.prix {
+    padding-left: 40%;
+    padding-right: 17%;
+}
+.btnAdd {
+    margin-left: 32%;
+  
+}
+.img {
+border-style: groove;
+margin: 1%;
+}
+.btnPost {
+    margin-bottom: 1%
+}
+.comment {
+    border-style: groove;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    padding-left: 1%;
+}
+.commentaires {
+    padding-left: 0px;
+    padding-right: 0px;
+}
