@@ -80,16 +80,17 @@ class PanierController extends AbstractController
 
     }
 
-
-    public function supprimer($id)
-    {
-
-    }
     /**
      * @Route("/panier/commande/", name="commander")
      */
     public function commander(UserInterface $user, Request $request)
     {
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
         $infoUser = $user->getInfoUser();
 
 
@@ -137,7 +138,9 @@ class PanierController extends AbstractController
             'infoUser' => $infoUser,
             'LivraisonOrder' => $infoFacture,
             'formInfo' => $formInfo->createView(),
-            'formFacture' => $formFacture->createView()
+            'formFacture' => $formFacture->createView(),
+            'categories' => $categories,
+            'marques' => $marques
 
 
         ]);
@@ -147,12 +150,21 @@ class PanierController extends AbstractController
      */
     public function payer()
     {
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
         $repo = $this->getDoctrine()->getRepository(ModePaiement::class);
+
         $methods = $repo->findAll();
 
 
         return $this->render('\panier\paiement.html.twig', [
             'ModePaiement' => $methods,
+            'categories' => $categories,
+            'marques' => $marques
 
         ]);
     }
@@ -162,11 +174,20 @@ class PanierController extends AbstractController
      */
     public function livreur()
     {
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
+
         $repo = $this->getDoctrine()->getRepository(ModeLivraison::class);
         $livreurs = $repo->findAll();
 
         return $this->render('\panier\livraison.html.twig', [
             'ModeLivraison' => $livreurs,
+            'categories' => $categories,
+            'marques' => $marques
         ]);
     }
     /**
@@ -175,9 +196,42 @@ class PanierController extends AbstractController
     public function finaliser()
     {
         
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
+
         return $this->render('\panier\checkout.html.twig', [
+            'categories' => $categories,
+            'marques' => $marques
             
         ]);
+
+    }
+
+    /**
+     * @Route("/panier/supprimer", name="delete")
+     */
+    public function supprimer(Request $request, UserInterface $user, ObjectManager $manager)
+    {
+        if($request->isXmlHttpRequest()){
+
+            $thisCart = $user->getCart();
+
+            $id = $request->request->get('id');
+
+            $reparticle = $this->getDoctrine()->getRepository(Article::class);
+            $article = $reparticle->find($id);
+
+            $thisCart->removeArticle($article);
+
+            $manager->persist($thisCart);
+            $manager->flush();
+
+            $response = new JsonResponse("1");
+            return $response;
+        }
 
     }
 

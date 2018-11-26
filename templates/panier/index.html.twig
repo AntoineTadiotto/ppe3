@@ -17,10 +17,12 @@
             <th scope="col">Vos articles</th>
             <th scope="col">Nom</th>
             <th scope="col">Prix</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
 {% for article in thisCart %}
+
         <tr>
             <td>
                 <div class="images">
@@ -39,7 +41,7 @@
             </td>
             <td>
                 <div>
-                 
+                    <button id="deletePanier" name="{{ article.id }}">X</button>
                 </div>
             </td>
             <td>
@@ -55,7 +57,44 @@
 {% if thisCart is empty %}
 <h1>panier vide</h1>
 {% else %}
-<a href="{{ path('commander') }}"><button class="btn btn-primary" type="submit">Commander</button></a>
+<a href="{{ path('commander') }}"><button class="btn btn-primary commander" type="submit">Commander</button></a>
 {% endif %}
 
 {% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready( function() {
+
+        //FUNCTION AJAX
+        function reqAjax(id){
+            $.ajax({
+                async: true,
+                type: 'POST',
+                url: "{{ path('delete') }}",
+                data: {'id': id},
+                success: function (data) {
+                    if(data == "1"){
+                        alert('Article supprimé du panier !');
+                        location.reload();
+                        return;
+                    } else {
+                        alert('Il y a eu un problème ! -> '+data);
+                        return;
+                    }
+                },
+                complete : function(){
+                    // do
+                }
+            });
+        }
+        $('#deletePanier').click(function(){
+            var id = $(this).attr('name');
+            reqAjax(id);
+        });
+    });
+</script>
+
+{% endblock %}
+
+
