@@ -2,6 +2,12 @@
 
 {% block title %} Votre panier {% endblock %}
 
+{% block stylesheets %}
+
+<link rel="stylesheet" href="{{ asset("assets/css/panier.css") }}">
+
+{% endblock %}
+
 {% block body %}
 
 
@@ -17,12 +23,12 @@
 {% for article in thisCart %}
         <tr>
             <td>
-                <div>
-                    <img src="{{ article.image }}" alt="">
+                <div class="images">
+                    <img src="{{ article.image }}" alt="" class="img"  style="height: 50%; width: 50%;">
                 </div>
             </td>
             <td>
-                <div>
+                <div class="nom">
                     <p>{{ article.title }}</p>
                 </div>
             </td>
@@ -46,8 +52,10 @@
 {% endfor %}
     </tbody>
 </table>
-
+{% if thisCart is empty %}
+<h1>panier vide</h1>
+{% else %}
 <a href="{{ path('commander') }}"><button class="btn btn-primary" type="submit">Commander</button></a>
-
+{% endif %}
 
 {% endblock %}
