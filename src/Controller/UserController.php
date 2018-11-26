@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Marque;
 use App\Entity\Category;
+use App\Entity\InfoUser;
 use App\Form\InfoUserType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -18,6 +19,7 @@ class UserController extends AbstractController
      */
     public function index(UserInterface $user, Request $request, ObjectManager $manager)
     {
+
         
         $repo = $this->getDoctrine()->getRepository(Category::class);
         $repoM = $this->getDoctrine()->getRepository(Marque::class);

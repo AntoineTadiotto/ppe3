@@ -176,16 +176,14 @@ class BoutiqueController extends AbstractController
     /**
      * @Route("/boutique/article/{id}", name="article")
      */
-    public function show($id, Request $request, ObjectManager $manager, Article $article){
-        $repo = $this->getDoctrine()->getRepository(Article::class);
-
-        $article = $repo->find($id);
+    public function show(Article $article, Request $request, ObjectManager $manager){
         
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
         $categories = $repoAllCat->findAll(); 
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
+
         $repoM = $this->getDoctrine()->getRepository(Marque::class);
         $repoC = $this->getDoctrine()->getRepository(Category::class);
         
@@ -196,17 +194,15 @@ class BoutiqueController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
 
         $form->handleRequest($request);
-
         if($form->isSubmitted() && $form->isValid()){
             $comment->setCreatedAt(new \DateTime())
                     ->setArticle($article);
-                    
                     
 
             $manager->persist($comment);
             $manager->flush();
 
-            return $this->redirectToRoute('article', ['id' => $id]);
+            return $this->redirectToRoute('article', ['id' => $article->getId()]);
 
         }
         

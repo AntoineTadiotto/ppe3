@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class CommentType extends AbstractType
 {
@@ -15,6 +16,7 @@ class CommentType extends AbstractType
         $builder
             ->add('content', TextType::class, ['label' => 'Commentaire'])
             ->add('author', TextType::class, ['label' => 'Nom'])
+            ->add('submit', SubmitType::Class, ['label' => 'poster le commentaire'])
         ;
     }
 

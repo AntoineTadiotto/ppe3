@@ -7,12 +7,14 @@ use App\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends Controller {
 
     /**
      * @Route("/connexion", name="security_login")
+     * @Method({"POST"})
      */
     public function login(Request $request, AuthenticationUtils $authenticationUtils) {
 
@@ -34,7 +36,9 @@ class SecurityController extends Controller {
                 ->add('_username', null, ['label' => 'Email'])
                 ->add('_password', \Symfony\Component\Form\Extension\Core\Type\PasswordType::class, ['label' => 'Mot de passe'])
                 ->add('ok', \Symfony\Component\Form\Extension\Core\Type\SubmitType::class, ['label' => 'Ok', 'attr' => ['class' => 'btn-primary btn-block']])
+                ->setMethod('POST')
                 ->getForm();
+       
         return $this->render('security/login.html.twig', [
                     'mainNavLogin' => true, 'title' => 'Connexion',
                     'form' => $form->createView(),

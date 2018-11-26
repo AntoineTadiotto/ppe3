@@ -29,7 +29,7 @@
             <h2 class="card-text prix"> {{ article.prix }} € </h2>
         </div>
         <div class="card-body">
-            <button class="btn btn-primary btnAdd" id="addPanier">Ajouter au panier</button>        
+            <button type="button" class="btn btn-primary btnAdd" id="addPanier">Ajouter au panier</button>        
         </div>
 </div>
 </div>
@@ -39,17 +39,16 @@
 </div>
 
 <div class="card mb-3 container">
-<section id="commentaire">
+{# <section id="commentaire"> #}
 
-{{ form_start(commentForm)}}
+{{ form_start(commentForm, {'method': 'POST'}) }}
 
 {{ form_row(commentForm.author, {'attr':{'placeholder': "votre nom" }})}}
 {{ form_row(commentForm.content, {'attr':{'placeholder': "votre commentaire"}}) }}
 
-<button type="submit" class="btn btn-success btnPost">poster le commentaire</button>
-</div>
 
 {{ form_end(commentForm) }}
+</div>
 
 <div class="card mb-3 container commentaires">
 
@@ -68,7 +67,7 @@
 
 {% endfor %}
 </div>
-</section>
+{# </section> #}
 
 {% endblock %}
 

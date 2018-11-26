@@ -2,13 +2,15 @@
 namespace App\Controller;
 
 // use App\Entity\Cart;
+use App\Entity\Cart;
 use App\Entity\User;
+use App\Entity\Marque;
 use App\Form\UserType;
+use App\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use App\Entity\Cart;
 
 class RegistrationController extends Controller {
 
@@ -16,6 +18,13 @@ class RegistrationController extends Controller {
      * @Route("/inscription", name="security_registration")
      */
     public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder) {
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
+        
         // 1) build the form
         // $cart = new Cart();
         $user = new User();
@@ -46,7 +55,9 @@ class RegistrationController extends Controller {
             'controller_name' => 'Inscription',
             'form' => $form->createView(), 
             'mainNavRegistration' => true, 
-            'title' => 'Inscription'
+            'title' => 'Inscription',
+            'marques' => $marques,
+            'categories' => $categories
             ]);
     }
 

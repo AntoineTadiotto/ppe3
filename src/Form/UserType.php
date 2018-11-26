@@ -16,6 +16,7 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->setMethod('POST')
             ->add('username')
             ->add('email', EmailType::class)
             ->add('plainPassword', RepeatedType::class, array(
@@ -24,6 +25,7 @@ class UserType extends AbstractType
                 'second_options' => array('label' => 'Confirmation du mot de passe'),
             ))
             ->add('submit', SubmitType::class, ['label'=>'Envoyer', 'attr'=>['class'=>'ui primary button']] )
+            
 
 
         ;
