@@ -21,8 +21,10 @@
         </tr>
     </thead>
     <tbody>
+{% set total = 0 %}
 {% for article in thisCart %}
 
+    {% total = total + article.prix %}
         <tr>
             <td>
                 <div class="images">
@@ -57,6 +59,7 @@
 {% if thisCart is empty %}
 <h1>panier vide</h1>
 {% else %}
+<h1>total {{ article.prix  }}</h1>
 <a href="{{ path('commander') }}"><button class="btn btn-primary commander" type="submit">Commander</button></a>
 {% endif %}
 
