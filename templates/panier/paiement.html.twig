@@ -1,12 +1,22 @@
 {% extends 'base.html.twig' %}
 {% block title %}Méthode paiement {% endblock %}
 
+
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="{{ asset("assets/css/paiement.css") }}">
+
+{% endblock %}
+
 {% block body %}
 <h1>Méthode de paiement</h1>
 
 {% for ModePaiement in ModePaiement %}
 
-<a href="{{ path('livraison') }}"<h3>{{ ModePaiement.libelle }}</h3></a>
+<a  href="{{ path('livraison') }}"><img src="../../../{{ ModePaiement.image }}" alt=""></a>
+
+
 
 {% endfor %}
 

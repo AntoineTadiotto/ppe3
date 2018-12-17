@@ -15,12 +15,10 @@
     <div class="col-6 col-md-4">
         <div class="card mb-3">
             <h3 class="card-header">{{ marque.nom }}</h3>
-           
+             <a href="{{ path('select_marque', {'id': marque.id}) }}"> 
             <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="{{ marque.image }}" alt="Card image">
-
-            <div class="card-body">
-                <a href="{{ path('select_marque', {'id': marque.id }) }}"> Voir </a>
-            </div>
+            </a>
+          
         </div>
     </div>
 

@@ -3,11 +3,6 @@
 {% block title %}
 
 
-{% for marque in laMarque %}
-{{marque.nom }}
-
-{% endfor %}
-
 {% endblock %}
 
 {% block stylesheets %}
@@ -18,12 +13,9 @@
 
 {% block body %}
 
-{% for category in laCategory %}
-{% for marque in laMarque %}
 
-<h1> Les produits {{marque.nom }} </h1>
-{% endfor %}
-{% endfor %}
+
+<h1> Les produits trouvé</h1>
 
 <section class="categories">
 

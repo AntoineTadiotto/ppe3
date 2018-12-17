@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
 {% block title %}Méthode de livraison {% endblock %}
 
+
+{% block stylesheets %}
+
+<link rel="stylesheet" href="{{ asset("assets/css/paiement.css") }}">
+
+{% endblock %}
+
 {% block body %}
 <h1>Méthode de livraison</h1>
 
+
+
 {% for ModeLivraison in ModeLivraison %}
 
-<a href="{{ path('checkout') }}"<h1>{{ ModeLivraison.title }}</h1></a>
+<a  href="{{ path('checkout') }}"><img src="../../../{{ ModeLivraison.image }}" alt=""></a>
 
 {% endfor %}
 
-<a href="{{ path('checkout')}}"> Suivant</a>
 
 {% endblock %}

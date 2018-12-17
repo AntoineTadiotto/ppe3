@@ -26,6 +26,7 @@ use App\Entity\Comment;
 
 
 
+
 class BoutiqueController extends AbstractController
 {
     /**
@@ -211,6 +212,40 @@ class BoutiqueController extends AbstractController
             'commentForm' => $form->createView(),
             'marques' => $marques,
             'categories' => $categories
+        ]);
+    }
+
+    /**
+     * @Route("/boutique/search", name="search")
+     */
+    public function search(Request $request, ObjectManager $manager){
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
+
+
+        $motrecherche = $request->get('motrecherche');
+
+        //manière pro non sql raw
+        $reposearch = $this->getDoctrine()->getRepository(Article::class);  
+        $qb = $reposearch->createQueryBuilder('p')
+            ->andwhere('p.title like :title')
+            ->setParameter('title', '%'.$motrecherche.'%')
+            ->orderBy('p.title', 'ASC')
+            ->getQuery();
+
+        $articles = $qb->getResult();
+
+        //en sql raw
+        
+
+        return $this->render('boutique/search.html.twig',[
+            'marques' => $marques,
+            'categories' => $categories,
+            'articles' => $articles
         ]);
     }
 

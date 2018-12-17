@@ -5,7 +5,8 @@
 
 
  <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-
+<a href="{{ path('pdf') }}">oui</a>
+<h1>Payer votre commande</h1>
 <div id="bouton-paypal"></div>
   <script>
     paypal.Button.render({
@@ -52,6 +53,7 @@
             // Exemple : window.location.replace("Une url quelconque");
             alert("Paiement approuvé ! Merci !");
             window.location.replace("{{ path('home') }}");
+
             
             
           } else {

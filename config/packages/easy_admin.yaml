@@ -2,19 +2,44 @@ easy_admin:
     site_name: MassCrab
 
     entities:
-#        # List the entity class name you want to manage
-        - App\Entity\Article
-        - App\Entity\Category
-        - App\Entity\Marque
-        - App\Entity\User
-        - App\Entity\Commande
-        - App\Entity\LivraisonOrder
-        - App\Entity\ModeLivraison
-        - App\Entity\ModePaiement
-        
-
+        Marque:
+            class: App\Entity\Marque
+            list:
+                fields: ['id','nom', { property: 'image', type: 'image'}, 'articles']
+        Category:
+            class: App\Entity\Category
+            list:
+                fields: ['id','title','description', { property: 'image', type: 'image'}, 'articles']
+        Article:
+            class: App\Entity\Article
+            list:
+                fields: ['id','title','description', { property: 'image', type: 'image'}, 'prix']
+        User:
+            class: App\Entity\User
+            list:
+                fields: ['id','username','email','roles',{ property: 'last_login', type: 'datetime' }, { property: 'enabled', type: 'toggle'}]
+        InfoUser:
+            class: App\Entity\InfoUser
+            list:
+                fields: ['id','nom','prenom','adresse1','adresse2','codepostal','ville','telephone']
+        LivraisonOrder:
+            class: App\Entity\LivraisonOrder
+            list:
+                fields: ['id','nom','prenom','adresse1','adresse2','codepostal','ville','telephone']
+        Commande:
+            class: App\Entity\Commande
+        Modelivraison:
+            class: App\Entity\ModeLivraison
+        ModePaiement:
+            class: App\Entity\ModePaiement
     design:
-        brand_color: 'rgba(26, 188, 156, 0.85)'
+        assets:
+            css:
+                # ...
+                - 'bundles/easyadmin/bootstrap-all.css'
+                - 'css/admin.css'
+            js:
+                - 'bundles/easyadmin/bootstrap-all.js'
         
 framework:
     translator: { fallbacks: [ "fr" ]}

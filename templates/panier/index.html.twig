@@ -17,6 +17,7 @@
             <th scope="col">Vos articles</th>
             <th scope="col">Nom</th>
             <th scope="col">Prix</th>
+            <th scope="col">Nombre</th>
             <th></th>
         </tr>
     </thead>
@@ -24,7 +25,7 @@
 {% set total = 0 %}
 {% for article in thisCart %}
 
-    {% total = total + article.prix %}
+    {% set total = total + article.prix + (article.prix * tva) %}
         <tr>
             <td>
                 <div class="images">
@@ -38,19 +39,22 @@
             </td>
             <td>
                 <div>
-                    <h1>{{ article.prix }} euro</h1>
+                    <h1>{{ article.prix + (article.prix * tva) }} euros TTC</h1>
                 </div>            
+            </td>
+            <td>
+                <div>
+                
+                   <input type="text" placeholder="1">
+              
+                </div>
             </td>
             <td>
                 <div>
                     <button id="deletePanier" name="{{ article.id }}">X</button>
                 </div>
             </td>
-            <td>
-                <div>
-                   
-                </div>
-            </td>
+
 
 
 {% endfor %}
@@ -59,7 +63,10 @@
 {% if thisCart is empty %}
 <h1>panier vide</h1>
 {% else %}
-<h1>total {{ article.prix  }}</h1>
+
+{% set totalTTC = total  %}
+<h1>total ttc {{ totalTTC }} euros</h1>
+
 <a href="{{ path('commander') }}"><button class="btn btn-primary commander" type="submit">Commander</button></a>
 {% endif %}
 

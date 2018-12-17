@@ -2,6 +2,12 @@
 
 {% block title %} MassCrab {% endblock %}
 
+{% block stylesheets %}
+
+<link rel="stylesheet" href="{{ asset("assets/css/list.css") }}">
+
+{% endblock %}
+
 {% block body %}
 
 {% for category in category %}
@@ -19,12 +25,15 @@
     <div class="col-6 col-md-4">
         <div class="card mb-3">
             <h3 class="card-header">{{ article.title }}</h3>
-           
-            <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../{{ article.image }}" alt="Card image">
-
+             <a href="{{ path('article', {'id': article.id}) }}"> 
+            <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../../{{ article.image }}" alt="Card image">
+            </a>
             <div class="card-body card-footer">
                 <h3> {{ article.prix }} € </h3>
+                <div>
                 <a href="{{ path('article', {'id': article.id}) }}"> voir l'article </a>
+                <button type="button" class="quickAdd addMePanier" id="addMePanier" name="{{ article.id }}"> Ajouter </button>
+                </div>
             </div>
         </div>
     </div>
@@ -38,3 +47,43 @@
 
 
 {% endblock %}
+
+
+
+{% block javascript %}
+<script>
+
+$(document).ready( function() {
+
+    //FUNCTION AJAX
+    function reqCatAjax(id){
+        var myurl = "{{ path('ajouter_panier', {'id': 'this_id'}) }}";
+        var myurl = myurl.replace("this_id", id);
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: myurl,
+            //data: {'id': id},
+            success: function (data) {
+                if(data == "1"){
+                    alert('Article ajouté au panier !');
+                    return;
+                } else {
+                    alert('Il y a eu un problème ! -> '+data);
+                    return;
+                }
+            },
+            complete : function(){
+                // do
+            }
+        });
+    }
+    $('.addMePanier').click(function(){
+        var id = $(this).attr('name');
+        reqCatAjax(id);
+    });
+});
+</script> 
+
+{% endblock %} 

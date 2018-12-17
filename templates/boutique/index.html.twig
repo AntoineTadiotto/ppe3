@@ -14,12 +14,9 @@
       <div class="col-6 col-md-4">
         <div class="card mb-3">
             <h3 class="card-header">{{ category.title }}</h3>
-           
+              <a href="{{ path('category', {'id': category.id }) }}"> 
             <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="{{ category.image }}" alt="Card image">
-
-            <div class="card-body">
-                <a href="{{ path('category', {'id': category.id }) }}"> Voir </a>
-            </div>
+            </a>
         </div>
     </div>
 
