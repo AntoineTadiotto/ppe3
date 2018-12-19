@@ -27,7 +27,7 @@
         <div class="card mb-3">
             <h3 class="card-header">{{ article.title }}</h3>
              <a href="{{ path('article', {'id': article.id}) }}"> 
-            <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../../{{ article.image }}" alt="Card image">
+            <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../{{ article.image }}" alt="Card image">
             </a>
             <div class="card-body card-footer">
             <h3> {{ article.prix }} € </h3>

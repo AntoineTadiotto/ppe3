@@ -23,35 +23,36 @@
     </thead>
     <tbody>
 {% set total = 0 %}
-{% for article in thisCart %}
+{% for ligne in lignes %}
 
-    {% set total = total + article.prix + (article.prix * tva) %}
+    {% set total = total + ligne.article.prix + (ligne.article.prix * tva) %}
         <tr>
             <td>
                 <div class="images">
-                    <img src="{{ article.image }}" alt="" class="img"  style="height: 50%; width: 50%;">
+                    <img src="{{ ligne.article.image }}" alt="" class="img"  style="height: 50%; width: 50%;">
                 </div>
             </td>
             <td>
                 <div class="nom">
-                    <p>{{ article.title }}</p>
+                    <p>{{ ligne.article.title }}</p>
                 </div>
             </td>
             <td>
                 <div>
-                    <h1>{{ article.prix + (article.prix * tva) }} euros TTC</h1>
+                    <h1>{{ ligne.article.prix + (ligne.article.prix * tva) }} euros TTC</h1>
                 </div>            
             </td>
             <td>
                 <div>
                 
-                   <input type="text" placeholder="1">
+                   <input type="text" placeholder="{{ ligne.quantity }}">
+                    
               
                 </div>
             </td>
             <td>
                 <div>
-                    <button id="deletePanier" name="{{ article.id }}">X</button>
+                    <button class="deletePanier" name="{{ ligne.id }}">X</button>
                 </div>
             </td>
 
@@ -60,7 +61,7 @@
 {% endfor %}
     </tbody>
 </table>
-{% if thisCart is empty %}
+{% if lignes is empty %}
 <h1>panier vide</h1>
 {% else %}
 
@@ -98,7 +99,7 @@
                 }
             });
         }
-        $('#deletePanier').click(function(){
+        $('.deletePanier').click(function(){
             var id = $(this).attr('name');
             reqAjax(id);
         });

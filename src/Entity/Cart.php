@@ -29,9 +29,15 @@ class Cart
      */
     private $articles;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LigneCart", mappedBy="cart")
+     */
+    private $ligneCarts;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->ligneCarts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,4 +84,35 @@ class Cart
     }
     public function __toString() {
         return (string) $this->user; }
+
+    /**
+     * @return Collection|LigneCart[]
+     */
+    public function getLigneCarts(): Collection
+    {
+        return $this->ligneCarts;
+    }
+
+    public function addLigneCart(LigneCart $ligneCart): self
+    {
+        if (!$this->ligneCarts->contains($ligneCart)) {
+            $this->ligneCarts[] = $ligneCart;
+            $ligneCart->setCart($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneCart(LigneCart $ligneCart): self
+    {
+        if ($this->ligneCarts->contains($ligneCart)) {
+            $this->ligneCarts->removeElement($ligneCart);
+            // set the owning side to null (unless already changed)
+            if ($ligneCart->getCart() === $this) {
+                $ligneCart->setCart(null);
+            }
+        }
+
+        return $this;
+    }
 }

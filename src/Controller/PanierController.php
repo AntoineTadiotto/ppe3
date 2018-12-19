@@ -12,6 +12,7 @@ use App\Form\LivraisonType;
 use App\Entity\ModePaiement;
 use App\Entity\ModeLivraison;
 use App\Entity\LivraisonOrder;
+use App\Entity\LigneCart;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,23 +34,23 @@ class PanierController extends AbstractController
         $thisCart = $user->getCart();
 
 
-        $thisCart = $thisCart->getArticles();
+        // $thisArticle = $thisCart->getArticles();
+    
+        $lignes = $thisCart->getLigneCarts();
 
-        
         $repo = $this->getDoctrine()->getRepository(Category::class);
         $repoM = $this->getDoctrine()->getRepository(Marque::class);
         
         $marques = $repoM->findAll();
-    
-
         $categories = $repo->findAll();
 
 
         return $this->render('panier/index.html.twig', [
             'controller_name' => 'PanierController',
-            'thisCart' => $thisCart,
+            // 'thisArticle' => $thisArticle,
             'categories' => $categories,
-            'marques' => $marques
+            'marques' => $marques,
+            'lignes' => $lignes
         ]);
     }
     /**
@@ -61,21 +62,64 @@ class PanierController extends AbstractController
     
         //IF AJAX ADD PANIER
         if ($request->isXmlHttpRequest()) {
-            //SAVOIR SI L'ARTICLE EXISTE DEJA DANS LA COLLECTION DU PANIER DE L'USER
-            $thisCart = $this->getDoctrine()
-                ->getRepository(Cart::class)
-                ->createQueryBuilder('c')
-                ->where('c.user = :user')
-                ->setParameter('user', $user)
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getSingleResult();
-            $thisCart->addArticle($article);
-            $manager->persist($thisCart);
-            $manager->flush();
 
+            $thisCart = $this->getDoctrine()
+            ->getRepository(Cart::class)
+            ->createQueryBuilder('c')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
+            $thisCart->AddArticle($article);
+            $manager->persist($thisCart);
+            
+            //verifier si l'article est deja présent dans le panier
+            $lesLignes = $thisCart->getLigneCarts();
+            //si il y a des lignes dans le cart
+            if(!$lesLignes->isEmpty()) {
+                // Create Var isfound
+                $isfound = 0;
+                // pour chaque ligne des lignes du cart 
+                foreach($lesLignes as $laligne){
+                    // recuperer l'article de la ligne
+                    $articleLigne = $laligne->getArticle();
+                    // compare l'id de l'article de la ligne avec l'objet article
+                    if($articleLigne == $article){
+
+                         //augmente la quantité de l'article dans la ligne
+                        $quantityArticle = $laligne->getQuantity() + 1;
+                        $laligne->setQuantity($quantityArticle);
+
+                        $ligne = $laligne;       
+                        
+                        $isfound = 1;
+                    }
+                }
+
+                if(!$isfound){
+                    // si aucun article correspond créer une nouvelle ligne pour l'article
+                    $ligne = new ligneCart();
+                    $ligne->setCart($thisCart)
+                          ->setQuantity(1)
+                          ->setArticle($article);
+                }
+                
+            } else {
+                // si aucune ligne créer une nouvelle
+                $ligne = new ligneCart();
+                $ligne->setCart($thisCart)
+                      ->setQuantity(1)
+                      ->setArticle($article);
+            }
+                    
+            
+            $manager->persist($ligne);         
+            $manager->flush();
+         
             $response = new JsonResponse("1");
             return $response;
+
         }
 
     }
@@ -221,10 +265,18 @@ class PanierController extends AbstractController
 
             $id = $request->request->get('id');
 
-            $reparticle = $this->getDoctrine()->getRepository(Article::class);
+            $reparticle = $this->getDoctrine()->getRepository(LigneCart::class);
             $article = $reparticle->find($id);
 
-            $thisCart->removeArticle($article);
+            //supprime la ligne de la collection des lignes du cart
+            $thisCart->removeLigneCart($article);
+            
+            // supprime la ligne dans la table ligne_cart
+            $sql = "delete from ligne_cart where id = $id ";
+            $em = $this->getDoctrine()->getManager();
+            $stmt = $em->getConnection()->prepare($sql);
+            $stmt->execute();
+
 
             $manager->persist($thisCart);
             $manager->flush();
