@@ -24,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 
+
 class PanierController extends AbstractController
 {
     /**
@@ -125,9 +126,9 @@ class PanierController extends AbstractController
     }
 
     /**
-     * @Route("/panier/commande/", name="commander")
+     * @Route("/panier/commande/facturation/{valid}", name="commander")
      */
-    public function commander(UserInterface $user, Request $request)
+    public function commander($valid = null, UserInterface $user, Request $request)
     {
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
@@ -135,27 +136,24 @@ class PanierController extends AbstractController
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
+
         $infoUser = $user->getInfoUser();
 
+        if(!$valid){
+            return $this->redirectToRoute('home');
+        }
 
         if (!$infoUser) {
             $infoUser = new InfoUser();
             $infoUser->setUser($user);
         }
 
-        $infoFacture = $user->getUser();
-
-
-        if (!$infoFacture) {
-            $infoFacture = new LivraisonOrder();
-            $infoFacture->setUser($user);
-        }
+       
         // creation du form 
         $formInfo = $this->createForm(InfoUserType::class, $infoUser);
         $formInfo->handleRequest($request);
 
-        $formFacture = $this->createForm(LivraisonType::class, $infoFacture);
-        $formFacture->handleRequest($request);
+        $submit = 0;
 
         if ($formInfo->isSubmitted() && $formInfo->isValid()) {
 
@@ -163,37 +161,104 @@ class PanierController extends AbstractController
             $entityManager->persist($infoUser);
             $entityManager->flush();
 
+            $submit = 1;
 
-
-            $this->addFlash('success', 'Informations enregistrées');
+            $this->addFlash('success', 'Facturation enregistrées');
         }
 
-        if ($formFacture->isSubmitted() && $formFacture->isValid()) {
+        
 
-            $entity = $this->getDoctrine()->getManager();
-            $entity->persist($infoFacture);
-            $entity->flush();
-
-            $this->addFlash('success', 'Livraison enregistrées');
-
-        }
-
-        return $this->render('\panier\commande.html.twig', [
+        return $this->render('\panier\facturation.html.twig', [
             'infoUser' => $infoUser,
-            'LivraisonOrder' => $infoFacture,
             'formInfo' => $formInfo->createView(),
-            'formFacture' => $formFacture->createView(),
             'categories' => $categories,
-            'marques' => $marques
+            'marques' => $marques,
+            'submit' => $submit
 
 
         ]);
     }
+
     /**
-     * @Route("/panier/commande/paiement/", name="paiement")
+     * @Route("/panier/commande/infolivraison/{step}", name="infolivraison")
      */
-    public function payer()
+
+    public function livraison($step = null, UserInterface $user, Request $request)
     {
+        if($step != 1){
+            return $this->redirectToRoute('commander');
+        }
+
+        $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $repoAllCat->findAll(); 
+
+        $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
+        $marques = $repoAllMar->findAll();
+
+        $infoLivraison = $user->getUser();
+
+
+        if (!$infoLivraison) {
+            $infoLivraison = new LivraisonOrder();
+            $infoLivraison->setUser($user);
+        }
+
+        $formLivraison = $this->createForm(LivraisonType::class, $infoLivraison);
+        $formLivraison->handleRequest($request);
+
+        $submit = 0;
+
+        if ($formLivraison->isSubmitted() && $formLivraison->isValid()) {
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($infoLivraison);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Livraison enregistrées');
+
+            $submit = 1;
+
+        }
+            return $this->render('\panier\commande.html.twig', [
+                'LivraisonOrder' => $infoLivraison,
+                'formLivraison' => $formLivraison->createView(),
+                'categories' => $categories,
+                'marques' => $marques,
+                'submit' => $submit
+    
+    
+            ]);
+
+    }
+
+
+    /**
+     * @Route("/panier/commande/paiement/{choice}", name="paiement")
+     */
+    public function payer($choice = null)
+    {
+
+        $repoPaiement = $this->getDoctrine()->getRepository(ModePaiement::class);
+        $modesPaiement = $repoPaiement->findAll();
+        
+         
+          //si l'user a choisit un mode de paiement
+          if($choice != null){
+            
+            $resultChoice = $repoPaiement->find($choice);
+            //si le choix n'existe pas
+            if(!$resultChoice){
+                return $this->redirectToRoute('paiement');
+            }else{
+                //new session pour recup les sessions
+                $session = new Session();
+                //créer session pour l'user
+                $session->set('modePaiement', $choice);
+                //recup une session définis
+                //$sessionModePaiement = $session->get('modePaiement');
+                return $this->redirectToRoute('livraison');
+            }
+        }
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
         $categories = $repoAllCat->findAll(); 
@@ -214,10 +279,31 @@ class PanierController extends AbstractController
     }
 
     /**
-     * @Route("/panier/commande/livraison/", name="livraison")
+     * @Route("/panier/commande/livraison/{choice}", name="livraison")
      */
-    public function livreur()
+    public function livreur($choice = null)
     {
+
+        $repoLivraison = $this->getDoctrine()->getRepository(ModeLivraison::class);
+        $modesLivraison = $repoLivraison->findAll();
+
+        //si l'user a choisit un mode de livraison
+        if($choice != null){
+            
+            $resultChoice = $repoLivraison->find($choice);
+            //si le choix n'existe pas
+            if(!$resultChoice){
+                return $this->redirectToRoute('livraison');
+            }else{
+                //new session pour recup les sessions
+                $session = new Session();
+                //créer session pour l'user
+                $session->set('modeLivraison', $choice);
+                //recup une session définis
+                //$sessionModeLivraison = $session->get('modeLivraison');
+                return $this->redirectToRoute('checkout');
+            }
+        }
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
         $categories = $repoAllCat->findAll(); 
@@ -237,7 +323,7 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/commande/checkout/", name="checkout")
      */
-    public function finaliser()
+    public function finaliser($choice = null)
     {
         
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
@@ -287,6 +373,41 @@ class PanierController extends AbstractController
 
     }
 
+    /**
+     * @Route("/panier/retirer/{id}", name="remove_one")
+     */
+    public function remove(Article $article, Request $request, UserInterface $user, ObjectManager $manager){
+
+        if($request->isXmlHttpRequest()){
+
+            //recup les lignes du cart
+            $thisCart = $user->getCart();
+            $lesLignes = $thisCart->getLigneCarts();
+
+            //trouver la ligne avec le bon article
+            foreach($lesLignes as $ligne){
+
+                $ligneArticle = $ligne->getArticle();
+
+                if($ligneArticle == $article){
+
+                    // une fois trouver retire 1 a la quantité
+                    $quantityArticle = $ligne->getQuantity();
+
+                        $quantityArticle = $ligne->getQuantity() - 1;
+                        $ligne->setQuantity($quantityArticle);
+                    
+
+                    $manager->persist($ligne);         
+                    $manager->flush();
+         
+                    $response = new JsonResponse("1");
+                    return $response;
+                }
+            }
+
+        }
+    }
 
 
 

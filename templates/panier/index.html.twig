@@ -25,7 +25,8 @@
 {% set total = 0 %}
 {% for ligne in lignes %}
 
-    {% set total = total + ligne.article.prix + (ligne.article.prix * tva) %}
+    {% set prixArticle = (ligne.article.prix * tva)  * ligne.quantity %}
+    {% set total = total + prixArticle %}
         <tr>
             <td>
                 <div class="images">
@@ -39,13 +40,18 @@
             </td>
             <td>
                 <div>
-                    <h1>{{ ligne.article.prix + (ligne.article.prix * tva) }} euros TTC</h1>
+                    <h1>{{ prixArticle }} euros TTC</h1>
                 </div>            
             </td>
             <td>
                 <div>
-                
-                   <input type="text" placeholder="{{ ligne.quantity }}">
+                <div class="quantity">
+                {% if ligne.quantity > 1 %}
+                   <button class="removeone" name="{{ ligne.article.id }}"> - </button> 
+                {% endif %}   
+                   <p> {{ ligne.quantity }} </p>
+                   <button class="addone" name="{{ ligne.article.id }}"> + </button> 
+                </div>
                     
               
                 </div>
@@ -68,7 +74,7 @@
 {% set totalTTC = total  %}
 <h1>total ttc {{ totalTTC }} euros</h1>
 
-<a href="{{ path('commander') }}"><button class="btn btn-primary commander" type="submit">Commander</button></a>
+<a href="{{ path('commander', {valid: 1}) }}"><button class="btn btn-primary commander" type="submit">Commander</button></a>
 {% endif %}
 
 {% endblock %}
@@ -77,7 +83,7 @@
 <script>
     $(document).ready( function() {
 
-        //FUNCTION AJAX
+        //FUNCTION AJAX POUR SUPPRIMER UNE LIGNE DU PANIER
         function reqAjax(id){
             $.ajax({
                 async: true,
@@ -86,7 +92,7 @@
                 data: {'id': id},
                 success: function (data) {
                     if(data == "1"){
-                        alert('Article supprimé du panier !');
+                        {# alert('Article supprimé du panier !'); #}
                         location.reload();
                         return;
                     } else {
@@ -99,11 +105,79 @@
                 }
             });
         }
+        //boutton de suppression
         $('.deletePanier').click(function(){
             var id = $(this).attr('name');
             reqAjax(id);
         });
+    // fonction ajax pour ajouter 1 article en plus dans une ligne du panier
+    function reqAjaxAdd(id){
+        var myurl = "{{ path('ajouter_panier', {'id': 'this_id'}) }}";
+        var myurl = myurl.replace("this_id", id);
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: myurl,
+            //data: {'id': id},
+            success: function (data) {
+                if(data == "1"){
+                    {# alert('Article ajouté au panier !'); #}
+                     location.reload();
+                    return;
+
+                } else {
+                    alert('Il y a eu un problème ! -> '+data);
+                    return;
+                }
+            },
+            complete : function(){
+                // do
+            }
+        });
+    }
+    //boutton pour ajouter 1 article 
+    $('.addone').click(function(){
+        var id = $(this).attr('name');
+        reqAjaxAdd(id);
     });
+
+       // fonction ajax pour retirer 1 article en moins dans une ligne du panier
+    function reqAjaxRemove(id){
+        var myurl = "{{ path('remove_one', {'id': 'this_id'}) }}";
+        var myurl = myurl.replace("this_id", id);
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: myurl,
+            //data: {'id': id},
+            success: function (data) {
+                if(data == "1"){
+                    {# alert('Article retirer du panier !'); #}
+                     location.reload();
+                    return;
+
+                } else {
+                    alert('Il y a eu un problème ! -> '+data);
+                    return;
+                }
+            },
+            complete : function(){
+                // do
+            }
+        });
+    }
+    //boutton pour retirer 1 article 
+    $('.removeone').click(function(){
+        var id = $(this).attr('name');
+        reqAjaxRemove(id);
+    });
+
+});
+
+
+        
 </script>
 
 {% endblock %}

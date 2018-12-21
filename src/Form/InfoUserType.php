@@ -3,11 +3,12 @@
 namespace App\Form;
 
 use App\Entity\InfoUser;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
 class InfoUserType extends AbstractType
@@ -22,7 +23,8 @@ class InfoUserType extends AbstractType
             ->add('codepostal', TextType::class, ['label' => 'Code postal*'])
             ->add('ville', TextType::class, ['label' => 'Ville*'])
             ->add('telephone', TextType::class, ['label' => 'Numéro de téléphone*'])
-            ->add('submit', SubmitType::class, ['label'=>'enregistrer','attr'=>['class'=>'ui primary button']])
+            ->add('enregistrer', SubmitType::class, ['label' => 'enregistrer'])
+            
         ;
     }
 

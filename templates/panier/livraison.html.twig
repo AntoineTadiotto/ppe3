@@ -15,7 +15,7 @@
 
 {% for ModeLivraison in ModeLivraison %}
 
-<a  href="{{ path('checkout') }}"><img src="../../../{{ ModeLivraison.image }}" alt=""></a>
+<a  href="{{ path('livraison',{'choice' : ModeLivraison.id}) }}"><img src="../../../{{ ModeLivraison.image }}" alt=""></a>
 
 {% endfor %}
 

@@ -38,7 +38,7 @@
             <img style="height: 400px; width: 100%; display: block;.img-fluid. max-width: 100%;" src="../../{{ article.image }}" alt="Card image">
             </a>
             <div class="card-body card-footer">
-            <h3> {{ article.prix }} € </h3>
+            <h3> {{   ( article.prix * tva ) }} € </h3>
                 <a href="{{ path('article', {'id': article.id}) }}"> voir l'article </a>
                 <button type="button" class="quickAdd addMePanier" id="addMePanier" name="{{ article.id }}"> Ajouter </button>
             </div>

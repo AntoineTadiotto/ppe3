@@ -14,7 +14,7 @@
 
 {% for ModePaiement in ModePaiement %}
 
-<a  href="{{ path('livraison') }}"><img src="../../../{{ ModePaiement.image }}" alt=""></a>
+<a  href="{{ path('paiement',{'choice' : ModePaiement.id })}}"><img src="../../../{{ ModePaiement.image }}" alt=""></a>
 
 
 

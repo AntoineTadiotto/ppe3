@@ -65,11 +65,17 @@ class Article
      */
     private $ligneCarts;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LigneCommande", mappedBy="article")
+     */
+    private $ligneCommandes;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->commandes = new ArrayCollection();
         $this->ligneCarts = new ArrayCollection();
+        $this->ligneCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -236,6 +242,37 @@ class Article
             // set the owning side to null (unless already changed)
             if ($ligneCart->getArticle() === $this) {
                 $ligneCart->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LigneCommande[]
+     */
+    public function getLigneCommandes(): Collection
+    {
+        return $this->ligneCommandes;
+    }
+
+    public function addLigneCommande(LigneCommande $ligneCommande): self
+    {
+        if (!$this->ligneCommandes->contains($ligneCommande)) {
+            $this->ligneCommandes[] = $ligneCommande;
+            $ligneCommande->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneCommande(LigneCommande $ligneCommande): self
+    {
+        if ($this->ligneCommandes->contains($ligneCommande)) {
+            $this->ligneCommandes->removeElement($ligneCommande);
+            // set the owning side to null (unless already changed)
+            if ($ligneCommande->getArticle() === $this) {
+                $ligneCommande->setArticle(null);
             }
         }
 

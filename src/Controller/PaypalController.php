@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\LigneCommande;
 
 class PaypalController extends AbstractController
 {
@@ -43,9 +44,13 @@ class PaypalController extends AbstractController
             //Contenu de la transaction pour paypal
             $totalPrice = 0;
             $myCart = $user->getCart();
+            $lignes = $myCart->getLigneCarts();
+
             $myArticles = $myCart->getArticles();
-            foreach ($myArticles as $article) {
-                $totalPrice = $totalPrice + $article->getPrix();
+            foreach ($lignes as $ligne) {
+                $article = $ligne->getArticle();
+
+                $totalPrice = $totalPrice + ($article->getPrix() * 1.2 ) * $ligne->getQuantity();
             }
             $totalPrice = strval($totalPrice); //INT TO STR
             $payment_data = [
@@ -70,12 +75,15 @@ class PaypalController extends AbstractController
                     ]
                 ]
             ];
-            foreach ($myArticles as $key => $article) {
+            foreach ($lignes as $ligne) {
+                $article = $ligne->getArticle();
+                $prix = $article->getPrix() * 1.2;
+                $prixTVA = strval($prix); //INT TO STR
                 $item = [
                     "sku" => "1PK5Z9",
-                    "quantity" => "1",
+                    "quantity" => $ligne->getQuantity(),
                     "name" => $article->getTitle(),
-                    "price" => $article->getPrix(),
+                    "price" => $prixTVA ,
                     "currency" => "EUR"
                 ];
                 array_push($payment_data["transactions"][0]["item_list"]["items"], $item); 
@@ -146,33 +154,7 @@ class PaypalController extends AbstractController
                         // $identityOrder = new IdentityOrder();
                          $infoUser = $user->getInfoUser();
                          $livraisonOrder = $user->getUser();
-                        // $identityOrder->setCivility($identityUser->getCivility())
-                        //     ->setPrenom($identityUser->getPrenom())
-                        //     ->setNom($identityUser->getNom())
-                        //     ->setEmail($identityUser->getEmail())
-                        //     ->setTelephone($identityUser->getTelephone())
-                        //     ->setNameSociety($identityUser->getNameSociety());
-                        // $manager->persist($identityOrder);
-                        //Création FacturationOrder
-                        // $facturationOrder = new FacturationOrder();
-                        // $facturationUser = $user->getFacturationUser();
-                        // $facturationOrder->setAdresse($facturationUser->getAdresse())
-                        //     ->setPays($facturationUser->getPays())
-                        //     ->setComplementAdresse($facturationUser->getComplementAdresse())
-                        //     ->setEtatRegion($facturationUser->getEtatRegion())
-                        //     ->setVille($facturationUser->getVille())
-                        //     ->setCodePostal($facturationUser->getCodePostal());
-                        // $manager->persist($facturationOrder);
-                        //Création LivraisonOrder
-                        // $livraisonOrder = new LivraisonOrder();
-                        // $livraisonUser = $user->getLivraisonUser();
-                        // $livraisonOrder->setAdresse($livraisonUser->getAdresse())
-                        //     ->setPays($livraisonUser->getPays())
-                        //     ->setComplementAdresse($livraisonUser->getComplementAdresse())
-                        //     ->setEtatRegion($livraisonUser->getEtatRegion())
-                        //     ->setVille($livraisonUser->getVille())
-                        //     ->setCodePostal($livraisonUser->getCodePostal());
-                        // $manager->persist($livraisonOrder);
+          
                         //Création de la commande
                         $ref = new UniqRef();
                         $reference = $ref->generateRef();
@@ -180,14 +162,13 @@ class PaypalController extends AbstractController
 
                         //Find mode paiement choisit
                         $session = new Session();
-                        $session->set('modePaiement', '2');
                         $sessionModePaiement = $session->get('modePaiement');
                         $repoPaiement = $this->getDoctrine()->getRepository(ModePaiement::class);
                         $modePaiement = $repoPaiement->find($sessionModePaiement);
 
                         //Find mode livraison choisit
                         $session = new Session();
-                        $session->set('modeLivraison', '1');
+
                         $sessionModeLivraison = $session->get('modeLivraison');
                         $repoLivraison = $this->getDoctrine()->getRepository(ModeLivraison::class);
                         $modeLivraison = $repoLivraison->find($sessionModeLivraison);
@@ -201,18 +182,40 @@ class PaypalController extends AbstractController
                             ->setAdresseLivraison($livraisonOrder)
                             ->setAdresseFacturation($infoUser)
                             ->setModePaiement($modePaiement)
-                            ->setModeLivraison($modeLivraison);
+                            ->setModeLivraison($modeLivraison)
+                            ->setPaymentOrder($paymentOrder);
                         $thisCart = $user->getCart();
+                        $lignesCarts = $thisCart->getLigneCarts();
+
                         $articlesCart = $thisCart->getArticles();
-                        foreach ($articlesCart as $articleCart) {
-                            $commande->addArticle($articleCart);
+                
+                        
+                        foreach ($lignesCarts as $ligne) {
+                            $article = $ligne->getArticle();
+                            $quantity = $ligne->getQuantity();
+
+                            $commande->addArticle($article);
+
+                            $ligneCommande = new LigneCommande();
+                            $ligneCommande->setCommande($commande)
+                                          ->setArticle($article)
+                                          ->setQuantity($quantity);
+                            $manager->persist($ligneCommande);
+
                         }
                         $manager->persist($commande);
                         $manager->flush();
                         //Remove le panier
                         foreach ($articlesCart as $article) {
                             $thisCart->removeArticle($article);
+
                         }
+
+                        $sql = "delete from ligne_cart";
+                        $em = $this->getDoctrine()->getManager();
+                        $stmt = $em->getConnection()->prepare($sql);
+                        $stmt->execute();
+            
                         $manager->persist($thisCart);
                         $manager->flush();
                         //Delete Sessions

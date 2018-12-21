@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+
 use App\Entity\LivraisonOrder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +22,8 @@ class LivraisonType extends AbstractType
         ->add('codepostal', TextType::class, ['label' => 'Code postal*'])
         ->add('ville', TextType::class, ['label' => 'Ville*'])
         ->add('telephone', TextType::class, ['label' => 'Numéro de téléphone*'])
-        ->add('submit', SubmitType::class, ['label'=>'enregistrer','attr'=>['class'=>'ui primary button']])
+        ->add('enregistrer', SubmitType::class, ['label' => 'enregistrer'])
+       
             
         ;
     }

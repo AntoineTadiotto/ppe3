@@ -11,17 +11,18 @@ Commande
         {# si l'utilisateur n'a pas encore d'adresse #}
 
         {# formulaire d'adresse #}
-
-
+        
 <div class="col">
-        <h1>Adresse de livraison</h1>
-        {{form(formLivraison)}}
+        <h1>Adresse de facturation</h1>
+           {{form(formInfo)}}    
+          
+              
 </div>
 
 </div>
 
 {% if submit == 1 %}
-<a href="{{ path('paiement')}}"<button type="button" class="btn btn-primary btn-lg">Suivant</button></a>
+<a href="{{ path('infolivraison', { step: 1})}}"<button type="button" class="btn btn-primary btn-lg">Suivant</button></a>
 {% endif %}
 
 

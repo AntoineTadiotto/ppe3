@@ -8,6 +8,7 @@
         "dompdf/dompdf": "^0.8.2",
         "easycorp/easyadmin-bundle": "^1.17",
         "friendsofsymfony/user-bundle": "~2.0",
+        "fzaninotto/faker": "^1.8",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "*",
         "symfony/console": "*",
@@ -27,6 +28,7 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.0",
         "symfony/debug-pack": "*",
         "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.0",
