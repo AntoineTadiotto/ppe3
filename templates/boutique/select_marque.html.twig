@@ -1,12 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-
-
 {% for marque in laMarque %}
-{{marque.nom }}
-
 {% endfor %}
+
 
 {% endblock %}
 
@@ -18,11 +15,12 @@
 
 {% block body %}
 
-{% for category in laCategory %}
+
 {% for marque in laMarque %}
 
+
 <h1> Les produits {{marque.nom }} </h1>
-{% endfor %}
+
 {% endfor %}
 
 <section class="categories">
@@ -40,7 +38,9 @@
             <div class="card-body card-footer">
             <h3> {{   ( article.prix * tva ) }} € </h3>
                 <a href="{{ path('article', {'id': article.id}) }}"> voir l'article </a>
+               
                 <button type="button" class="quickAdd addMePanier" id="addMePanier" name="{{ article.id }}"> Ajouter </button>
+           
             </div>
         </div>
     </div>
@@ -77,7 +77,7 @@ $(document).ready( function() {
                     alert('Article ajouté au panier !');
                     return;
                 } else {
-                    alert('Il y a eu un problème ! -> '+data);
+                      window.location.pathname = '/connexion';
                     return;
                 }
             },

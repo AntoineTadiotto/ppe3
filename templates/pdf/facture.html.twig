@@ -2,11 +2,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title>Title of the PDF</title>
+        {# <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> #}
+        {# <meta charset="UTF-8"> #}
+        <h1>MassCrab</h1>
+        <title>Facture de la commande {{ commande.reference }}</title>
     </head>
+
     <body>
-        <h4>{{ title }}</h4>
-        <p>Lorem Ipsum</p>
+    <h1>ref Commande: {{ commande.reference }} du {{ commande.createdAt|date("d/m/Y") }}</h1>
+        <h4>Numéro du paiement: {{ commande.paymentorder.paymentid }}</h4>
+
+    <h2>Résumé de la commande</h2>
+    <p><strong>Adresse facturation: </strong> {{ commande.adressefacturation.nom }} {{ commande.adressefacturation.prenom }}  </p>
+    <p>Adresse 1: {{ commande.adressefacturation.adresse1 }} </br> Adresse 2: {{ commande.adressefacturation.adresse2 }}</p>
+    <p>Code postal: {{ commande.adressefacturation.codepostal }} </br> Ville: {{ commande.adressefacturation.ville }}</p>
+    <p>Num de tel: {{ commande.adressefacturation.telephone }}</p>
+
+    <p><strong>Adresse livraison: </strong>{{ commande.adresselivraison.nom }} {{ commande.adresselivraison.prenom }}  </p>
+    <p>Adresse 1: {{ commande.adresselivraison.adresse1 }} </br> Adresse 2: {{ commande.adresselivraison.adresse2 }}</p>
+    <p>Code postal: {{ commande.adresselivraison.codepostal }} </br> Ville: {{ commande.adresselivraison.ville }}</p>
+    <p>Num de tel: {{ commande.adresselivraison.telephone }}</p>
+
+    <h2>Les articles</h2>
+    {% for ligne in lignes %} 
+        
+        <p>{{ ligne.quantity}}x {{ ligne.article.title }}: {{ ligne.article.prix }} € HT </p>
+        <p></p>
+    {% endfor %}
+    <h2>Modalités</h2>
+    <p>Mode de paiement: {{commande.modepaiement}}</p>
+    <p>Mode de livraison: {{commande.modelivraison}}, prix: {{commande.modelivraison.price }} € </p>
+    <h3>total de la commande TTC: {{ commande.paymentorder.amount}} €</h3>
     </body>
-</html>
+</html> 

@@ -58,6 +58,7 @@ class BoutiqueController extends AbstractController
         $categories = $repocat->findAll();
     
         $marques = $repo->findAll();
+
     
         return $this->render('boutique/marque.html.twig',[
             'marques' => $marques,

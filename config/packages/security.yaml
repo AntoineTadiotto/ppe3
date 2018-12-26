@@ -47,3 +47,4 @@ security:
          - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/panier, roles: ROLE_USER }
+         - { path: ^/profil, roles: ROLE_USER }

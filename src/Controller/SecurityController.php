@@ -18,6 +18,8 @@ class SecurityController extends Controller {
      */
     public function login(Request $request, AuthenticationUtils $authenticationUtils) {
 
+        
+
         $repo = $this->getDoctrine()->getRepository(Category::class);
         $repoM = $this->getDoctrine()->getRepository(Marque::class);
         

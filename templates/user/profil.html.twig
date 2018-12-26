@@ -1,12 +1,90 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-Profil
+    Profil
 {% endblock %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="{{ asset(" assets/css/listcommande.css") }}"="assets/css/listCommande.css" )=")" }}""="}}""">
+
+{% endblock %}
+
 {% block body %}
 
-<h1>Votre profil</h1>
+    <h1>Votre profil</h1>
 
-{{form(formInfo)}}
+    {{form(formInfo)}}
 
-{%  endblock %}
+        <h1>Vos commandes</h1>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Vos articles commandés</th>
+                    <th scope="col">Ref commande</th>
+                    <th scope="col">Date commande</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Quantité de l'article</th>
+                    <th scope="col">Prix de la commande</th>
+                    <th scope="col">Facture</th>
+                </tr>
+            </thead>
+            {% for ligne in lignes %}
+
+                {# <h1>{{ ligne.quantity }}x  {{ ligne.article }} {{ ligne.commande.createdAt|date("d/m/Y") }}  {{ ligne.commande.paymentorder.amount }} €</h1>
+<img src={{ ligne.article.image }}>
+ #}
+
+                <tr>
+                    <td>
+                        <div class="images">
+                            <img src="{{ ligne.article.image }}" alt="" class="img" style="height: 50%; width: 50%;">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ref">
+                            <h3>{{ ligne.commande.reference }}</h3>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date">
+                            <h3>{{ ligne.commande.createdAt|date("d/m/Y") }}</h3>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="nom">
+                            <p>{{ ligne.article.title }}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div class="quantity">
+
+                                <p>
+                                    {{ ligne.quantity }}
+                                </p>
+                            </div>
+
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <h1>{{ ligne.commande.paymentorder.amount }}
+                                euros TTC</h1>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div class="facture">
+
+                                <p>
+                                    <a href={{ path('pdf', {id  : ligne.commande.id }) }} target="_blank" >Votre PDF</a>
+                                </p>
+                            </div>
+
+                        </div>
+                    </td>
+                {% endfor %}
+
+            {% endblock %}

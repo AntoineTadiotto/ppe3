@@ -67,6 +67,31 @@ class CommandeFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($commande);
 
+            $commande = new Commande();
+            $commande->setAdresselivraison($livraisonorder)
+                     ->setAdresseFacturation($info)
+                     ->setModeLivraison($Modlivr)
+                     ->setModePaiement($ModPaid)
+                     ->setUser($user)
+                     ->setReference($reference)
+                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 years', $endDate = 'now', $timezone = null));
+
+
+            $manager->persist($commande);
+
+            
+            $commande = new Commande();
+            $commande->setAdresselivraison($livraisonorder)
+                     ->setAdresseFacturation($info)
+                     ->setModeLivraison($Modlivr)
+                     ->setModePaiement($ModPaid)
+                     ->setUser($user)
+                     ->setReference($reference)
+                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 years', $endDate = 'now', $timezone = null));
+
+
+            $manager->persist($commande);
+
             
         }
         

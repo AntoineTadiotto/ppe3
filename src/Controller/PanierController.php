@@ -36,12 +36,12 @@ class PanierController extends AbstractController
 
 
         // $thisArticle = $thisCart->getArticles();
-    
+
         $lignes = $thisCart->getLigneCarts();
 
         $repo = $this->getDoctrine()->getRepository(Category::class);
         $repoM = $this->getDoctrine()->getRepository(Marque::class);
-        
+
         $marques = $repoM->findAll();
         $categories = $repo->findAll();
 
@@ -60,68 +60,71 @@ class PanierController extends AbstractController
      */
     public function ajouter(Article $article, Request $request, UserInterface $user, ObjectManager $manager)
     {
-    
+        
         //IF AJAX ADD PANIER
         if ($request->isXmlHttpRequest()) {
 
+
             $thisCart = $this->getDoctrine()
-            ->getRepository(Cart::class)
-            ->createQueryBuilder('c')
-            ->where('c.user = :user')
-            ->setParameter('user', $user)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+                ->getRepository(Cart::class)
+                ->createQueryBuilder('c')
+                ->where('c.user = :user')
+                ->setParameter('user', $user)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleResult();
             $thisCart->AddArticle($article);
             $manager->persist($thisCart);
             
             //verifier si l'article est deja présent dans le panier
             $lesLignes = $thisCart->getLigneCarts();
             //si il y a des lignes dans le cart
-            if(!$lesLignes->isEmpty()) {
+            if (!$lesLignes->isEmpty()) {
                 // Create Var isfound
                 $isfound = 0;
                 // pour chaque ligne des lignes du cart 
-                foreach($lesLignes as $laligne){
+                foreach ($lesLignes as $laligne) {
                     // recuperer l'article de la ligne
                     $articleLigne = $laligne->getArticle();
                     // compare l'id de l'article de la ligne avec l'objet article
-                    if($articleLigne == $article){
+                    if ($articleLigne == $article) {
 
                          //augmente la quantité de l'article dans la ligne
                         $quantityArticle = $laligne->getQuantity() + 1;
                         $laligne->setQuantity($quantityArticle);
 
-                        $ligne = $laligne;       
-                        
+                        $ligne = $laligne;
+
                         $isfound = 1;
                     }
                 }
 
-                if(!$isfound){
+                if (!$isfound) {
                     // si aucun article correspond créer une nouvelle ligne pour l'article
                     $ligne = new ligneCart();
                     $ligne->setCart($thisCart)
-                          ->setQuantity(1)
-                          ->setArticle($article);
+                        ->setQuantity(1)
+                        ->setArticle($article);
                 }
-                
+
             } else {
                 // si aucune ligne créer une nouvelle
                 $ligne = new ligneCart();
                 $ligne->setCart($thisCart)
-                      ->setQuantity(1)
-                      ->setArticle($article);
+                    ->setQuantity(1)
+                    ->setArticle($article);
             }
-                    
-            
-            $manager->persist($ligne);         
+
+
+            $manager->persist($ligne);
             $manager->flush();
-         
+
             $response = new JsonResponse("1");
             return $response;
 
         }
+
+
 
     }
 
@@ -132,14 +135,14 @@ class PanierController extends AbstractController
     {
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
-        $categories = $repoAllCat->findAll(); 
+        $categories = $repoAllCat->findAll();
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
 
         $infoUser = $user->getInfoUser();
 
-        if(!$valid){
+        if (!$valid) {
             return $this->redirectToRoute('home');
         }
 
@@ -166,7 +169,7 @@ class PanierController extends AbstractController
             $this->addFlash('success', 'Facturation enregistrées');
         }
 
-        
+
 
         return $this->render('\panier\facturation.html.twig', [
             'infoUser' => $infoUser,
@@ -185,12 +188,12 @@ class PanierController extends AbstractController
 
     public function livraison($step = null, UserInterface $user, Request $request)
     {
-        if($step != 1){
+        if ($step != 1) {
             return $this->redirectToRoute('commander');
         }
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
-        $categories = $repoAllCat->findAll(); 
+        $categories = $repoAllCat->findAll();
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
@@ -219,15 +222,15 @@ class PanierController extends AbstractController
             $submit = 1;
 
         }
-            return $this->render('\panier\commande.html.twig', [
-                'LivraisonOrder' => $infoLivraison,
-                'formLivraison' => $formLivraison->createView(),
-                'categories' => $categories,
-                'marques' => $marques,
-                'submit' => $submit
-    
-    
-            ]);
+        return $this->render('\panier\commande.html.twig', [
+            'LivraisonOrder' => $infoLivraison,
+            'formLivraison' => $formLivraison->createView(),
+            'categories' => $categories,
+            'marques' => $marques,
+            'submit' => $submit
+
+
+        ]);
 
     }
 
@@ -243,13 +246,13 @@ class PanierController extends AbstractController
         
          
           //si l'user a choisit un mode de paiement
-          if($choice != null){
-            
+        if ($choice != null) {
+
             $resultChoice = $repoPaiement->find($choice);
             //si le choix n'existe pas
-            if(!$resultChoice){
+            if (!$resultChoice) {
                 return $this->redirectToRoute('paiement');
-            }else{
+            } else {
                 //new session pour recup les sessions
                 $session = new Session();
                 //créer session pour l'user
@@ -261,7 +264,7 @@ class PanierController extends AbstractController
         }
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
-        $categories = $repoAllCat->findAll(); 
+        $categories = $repoAllCat->findAll();
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
@@ -288,13 +291,13 @@ class PanierController extends AbstractController
         $modesLivraison = $repoLivraison->findAll();
 
         //si l'user a choisit un mode de livraison
-        if($choice != null){
-            
+        if ($choice != null) {
+
             $resultChoice = $repoLivraison->find($choice);
             //si le choix n'existe pas
-            if(!$resultChoice){
+            if (!$resultChoice) {
                 return $this->redirectToRoute('livraison');
-            }else{
+            } else {
                 //new session pour recup les sessions
                 $session = new Session();
                 //créer session pour l'user
@@ -306,7 +309,7 @@ class PanierController extends AbstractController
         }
 
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
-        $categories = $repoAllCat->findAll(); 
+        $categories = $repoAllCat->findAll();
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
@@ -323,19 +326,41 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/commande/checkout/", name="checkout")
      */
-    public function finaliser($choice = null)
+    public function finaliser($choice = null, UserInterface $user)
     {
+    
+        
+                        //Find mode paiement choisit
+        $session = new Session();
+        $sessionModePaiement = $session->get('modePaiement');
+        $repoPaiement = $this->getDoctrine()->getRepository(ModePaiement::class);
+        $modePaiement = $repoPaiement->find($sessionModePaiement);
+
+                        //Find mode livraison choisit
+        $session = new Session();
+        $sessionModeLivraison = $session->get('modeLivraison');
+        $repoLivraison = $this->getDoctrine()->getRepository(ModeLivraison::class);
+        $modeLivraison = $repoLivraison->find($sessionModeLivraison);
         
         $repoAllCat = $this->getDoctrine()->getRepository(Category::class);
-        $categories = $repoAllCat->findAll(); 
+        $categories = $repoAllCat->findAll();
 
         $repoAllMar = $this->getDoctrine()->getRepository(Marque::class);
         $marques = $repoAllMar->findAll();
 
+        $infoUser = $user->getInfoUser();
+
+        $infoLivraison = $user->getUser();
+
+
         return $this->render('\panier\checkout.html.twig', [
             'categories' => $categories,
-            'marques' => $marques
-            
+            'marques' => $marques,
+            'modePaiement' => $modePaiement,
+            'modeLivraison' => $modeLivraison,
+            'LivraisonOrder' => $infoLivraison,
+            'infoUser' => $infoUser
+
         ]);
 
     }
@@ -345,7 +370,7 @@ class PanierController extends AbstractController
      */
     public function supprimer(Request $request, UserInterface $user, ObjectManager $manager)
     {
-        if($request->isXmlHttpRequest()){
+        if ($request->isXmlHttpRequest()) {
 
             $thisCart = $user->getCart();
 
@@ -376,31 +401,32 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/retirer/{id}", name="remove_one")
      */
-    public function remove(Article $article, Request $request, UserInterface $user, ObjectManager $manager){
+    public function remove(Article $article, Request $request, UserInterface $user, ObjectManager $manager)
+    {
 
-        if($request->isXmlHttpRequest()){
+        if ($request->isXmlHttpRequest()) {
 
             //recup les lignes du cart
             $thisCart = $user->getCart();
             $lesLignes = $thisCart->getLigneCarts();
 
             //trouver la ligne avec le bon article
-            foreach($lesLignes as $ligne){
+            foreach ($lesLignes as $ligne) {
 
                 $ligneArticle = $ligne->getArticle();
 
-                if($ligneArticle == $article){
+                if ($ligneArticle == $article) {
 
                     // une fois trouver retire 1 a la quantité
                     $quantityArticle = $ligne->getQuantity();
 
-                        $quantityArticle = $ligne->getQuantity() - 1;
-                        $ligne->setQuantity($quantityArticle);
-                    
+                    $quantityArticle = $ligne->getQuantity() - 1;
+                    $ligne->setQuantity($quantityArticle);
 
-                    $manager->persist($ligne);         
+
+                    $manager->persist($ligne);
                     $manager->flush();
-         
+
                     $response = new JsonResponse("1");
                     return $response;
                 }

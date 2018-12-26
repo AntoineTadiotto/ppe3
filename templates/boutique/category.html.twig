@@ -70,7 +70,7 @@ $(document).ready( function() {
                     alert('Article ajouté au panier !');
                     return;
                 } else {
-                    alert('Il y a eu un problème ! -> '+data);
+                      window.location.pathname = '/connexion';
                     return;
                 }
             },

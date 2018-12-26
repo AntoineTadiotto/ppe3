@@ -28,11 +28,29 @@ easy_admin:
                 fields: ['id','nom','prenom','adresse1','adresse2','codepostal','ville','telephone']
         Commande:
             class: App\Entity\Commande
+        PaymentOrder:
+            class: App\Entity\PaymentOrder
         Modelivraison:
             class: App\Entity\ModeLivraison
         ModePaiement:
             class: App\Entity\ModePaiement
     design:
+        menu:
+            - { label: 'Retour sur le site', route: 'home' }
+            - { label: 'Statistiques', route: 'stats' }
+            - { label: 'Espace boutique'}
+            - Article
+            - Marque
+            - Category
+            - Modelivraison
+            - ModePaiement
+            - { label: 'Espace utilisateurs'}
+            - User
+            - InfoUser
+            - { label: 'Espace commandes'}
+            - LivraisonOrder
+            - Commande
+            - PaymentOrder
         assets:
             css:
                 # ...

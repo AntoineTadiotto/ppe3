@@ -1,0 +1,21 @@
+.img {
+    border-style: groove;
+    margin: 1%;
+    }
+
+.images {
+    width: 550px;
+}
+
+.nom {
+    font-size: 2em;
+}
+
+.commander {
+   margin-left: 50%;
+   margin-bottom: 10px;
+}
+
+.quantity {
+    font-size: 2em;
+}

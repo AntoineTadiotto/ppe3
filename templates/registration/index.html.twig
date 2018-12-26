@@ -4,7 +4,7 @@
 
 
 {% block body %}
-
+{% if not app.user %}
     <section class="generic-banner relative">
         <div class="container">
             <div class="row height align-items-center justify-content-center">
@@ -18,7 +18,9 @@
         </div>
     </section>
     <!-- End banner Area -->
-
+{% else %}
+<h1>Page Introuvable</h1>
+{% endif %}
 <!-- About Generic Start -->
 <div class="main-wrapper">
 
